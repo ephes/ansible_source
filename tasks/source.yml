@@ -1,0 +1,14 @@
+---
+- name: copy local source tree to remote
+  sudo: no
+  synchronize: >
+    src={{ project_dir }}
+    dest={{ webapp_dir }}
+    rsync_opts=--exclude=.git,--exclude=media,--exclude=requirements/cache
+    rsync_path="sudo rsync"
+  notify:
+    - restart gunicorn
+
+- name: chown rsynced files to deploy user
+  sudo: yes
+  file: path={{ webapp_dir }} owner={{ user }} recurse=yes
